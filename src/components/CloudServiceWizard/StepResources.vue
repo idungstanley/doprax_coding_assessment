@@ -6,20 +6,20 @@
     <div class="space-y-6">
       <!-- Instance Type -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Instance Type *</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Instance Type <span class="text-red-400 ml-2">*</span></label>
         <div class="flex flex-col w-fit">
           <div
             v-for="type in instanceTypes"
             :key="type.value"
-            class="p-4 cursor-pointer"
-            @click="setFieldValue('instanceType', type.value)"
+            class="md:p-4 py-4 cursor-pointer"
+            @click="handleChange('instanceType', type.value)"
           >
             <div class="flex items-center">
               <input
                 type="radio"
                 :id="`instance-${type.value}`"
                 :value="type.value"
-                v-model="values.instanceType"
+                :checked="props.values.instanceType === type.value"
                 class="h-4 w-4"
               />
               <label :for="`instance-${type.value}`" class="ml-3 block text-sm font-medium text-gray-700">
@@ -32,108 +32,105 @@
         <ErrorMessage name="instanceType" class="mt-1 text-sm text-red-600" />
       </div>
 
-      <div class="flex items-center w-full gap-3">
+      <div class="flex flex-col md:flex-row items-center w-full gap-3">
         <!-- vCPU -->
         <div class="w-full">
-          <label for="vCPU" class="block text-sm font-medium text-gray-700">vCPU *</label>
+          <label for="vCPU" class="block text-sm font-medium text-gray-700">vCPU <span class="text-red-400 ml-2">*</span></label>
           <Field
             id="vCPU"
             name="vCPU"
             type="number"
             min="1"
             max="32"
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            :value="props.values.vCPU"
+            @input="handleChange('vCPU', $event)"
+            class="mt-1 block w-full shadow rounded-md py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
           <ErrorMessage name="vCPU" class="mt-1 text-sm text-red-600" />
         </div>
         <!-- Memory -->
         <div class="w-full">
-          <label for="memory" class="block text-sm font-medium text-gray-700">Memory (GB) *</label>
+          <label for="memory" class="block text-sm font-medium text-gray-700">Memory (GB) <span class="text-red-400 ml-2">*</span></label>
           <Field
             id="memory"
             name="memory"
             type="number"
             min="1"
             max="256"
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            :value="props.values.memory"
+            @input="handleChange('memory', $event)"
+            class="mt-1 block w-full rounded-md shadow py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
           <ErrorMessage name="memory" class="mt-1 text-sm text-red-600" />
         </div>
         <!-- Storage -->
         <div class="w-full">
-          <label for="storage" class="block text-sm font-medium text-gray-700">Storage (GB) *</label>
+          <label for="storage" class="block text-sm font-medium text-gray-700">Storage (GB) <span class="text-red-400 ml-2">*</span></label>
           <Field
             id="storage"
             name="storage"
             type="number"
             min="10"
             max="2000"
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            :value="props.values.storage"
+            @input="handleChange('storage', $event)"
+            class="mt-1 block w-full rounded-md shadow py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
           <ErrorMessage name="storage" class="mt-1 text-sm text-red-600" />
         </div>
       </div>
     </div>
-
-    <div class="mt-8 flex justify-between">
-      <button
-        type="button"
-        @click="$emit('back')"
-        class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-      >
-        Back
-      </button>
-      <button
-        type="button"
-        @click="validateAndNext"
-        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-      >
-        Next
-      </button>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Field, ErrorMessage, useForm } from 'vee-validate';
+import { Field, ErrorMessage } from 'vee-validate';
 import type { CloudServiceForm } from '../../types/cloud-service';
 
-// Define emits with TypeScript
-const emit = defineEmits<{
-  (e: 'next'): void;
-  (e: 'back'): void;
+// Define props for values and errors
+const props = defineProps<{
+  values: CloudServiceForm;
+  errors: Record<string, string>;
 }>();
 
-// Use vee-validate's useForm instead of Formik's useFormikContext
-const { values, setFieldValue, validate } = useForm<CloudServiceForm>();
+// Define emits for field updates
+const emit = defineEmits<{
+  (e: 'update:field', field: keyof CloudServiceForm, value: any): void;
+}>();
 
 const instanceTypes = [
   {
     value: 'Standard',
     label: 'Standard (General Purpose)',
-    description: 'Balanced compute, memory, and networking'
+    description: 'Balanced compute, memory, and networking',
   },
   {
     value: 'Compute Optimized',
     label: 'Compute Optimized',
-    description: 'High performance processors'
+    description: 'High performance processors',
   },
   {
     value: 'Memory Optimized',
     label: 'Memory Optimized',
-    description: 'Fast performance for memory-intensive workloads'
+    description: 'Fast performance for memory-intensive workloads',
   },
   {
     value: 'Storage Optimized',
     label: 'Storage Optimized',
-    description: 'Low latency, high disk throughput'
-  }
+    description: 'Low latency, high disk throughput',
+  },
 ] as const;
 
-const validateAndNext = async () => {
-  const { valid } = await validate();
-  if (valid) {
-    emit('next');
+// Function to handle changes to form fields
+const handleChange = (field: keyof CloudServiceForm, value: any) => {
+  // For input events, extract the value from the event object
+  if (value instanceof Event) {
+    const target = (value as Event).target as HTMLInputElement;
+    const newValue = field === 'instanceType' ? target.value : Number(target.value);
+    emit('update:field', field, newValue);
+  } else {
+    // For direct values (e.g., instanceType from radio buttons)
+    emit('update:field', field, value);
   }
 };
 </script>

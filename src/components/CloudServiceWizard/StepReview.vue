@@ -1,112 +1,115 @@
 <template>
-  <div>
-    <h3 class="text-lg font-medium text-gray-900 mb-4">Review Configuration</h3>
-    <p class="text-gray-600 mb-6">Please review your service configuration before deployment.</p>
-    
-    <div class="bg-gray-50 p-6 rounded-lg">
-      <h4 class="text-md font-medium text-gray-900 mb-4">Service Summary</h4>
-      
+  <div class="text-xs text-[#6B7280] pt-4">
+    <div class="flex items-center mb-4 gap-2 text-[#111827] text-base">
+      <img src="@/assets/icons/check.svg" alt="check icon" />
+      <h3 class="font-medium">Review Configuration</h3>
+    </div>
+    <p class="mb-6">Please review your service configuration before deployment.</p>
+
+    <div class="bg-[#F9FAFB] rounded-lg">
+      <h4 class="text-base font-medium text-[#111827] mb-4 border-b border-[#E5E7EB] p-6">Service Summary</h4>
+
       <!-- Cover Image -->
-      <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Cover image</label>
-        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+      <div class="mb-6 flex flex-col md:flex-row border-b border-[#E5E7EB] p-6">
+        <label class="block text-sm font-medium text-gray-700 mb-1 md:w-1/3 w-full">Cover image</label>
+        <div class="mt-1 flex justify-center items-center px-6 pt-5 pb-6 bg-gray-200 rounded-md w-[100px] h-[100px]">
           <div class="space-y-1 text-center">
-            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-              <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
+            <div v-if="imageUrl" class="w-full h-full">
+              <img :src="imageUrl" alt="Selected Cover Image" class="w-full h-full object-cover rounded-lg" />
+            </div>
+            <div v-else>
+              <img src="@/assets/icons/image-outline.svg" alt="image Icon" class="mx-auto text-gray-400" />
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Service Details -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <h5 class="text-sm font-medium text-gray-500">Service Name</h5>
-          <p class="mt-1 text-sm text-gray-900">{{ values.serviceName }}</p>
+      <div class="flex flex-col gap-2">
+        <div class="border-b border-[#E5E7EB] p-6 flex flex-col md:flex-row">
+          <h5 class="text-sm font-medium text-gray-500 md:w-1/3 w-full">Service Name</h5>
+          <p class="mt-1 text-sm text-gray-900">{{ props.values.serviceName }}</p>
         </div>
-        
-        <div>
-          <h5 class="text-sm font-medium text-gray-500">Description</h5>
-          <p class="mt-1 text-sm text-gray-900">{{ values.description || 'No description' }}</p>
+
+        <div class="border-b border-[#E5E7EB] p-6 flex flex-col md:flex-row">
+          <h5 class="text-sm font-medium text-gray-500 md:w-1/3 w-full">Description</h5>
+          <p class="mt-1 text-sm text-gray-900">{{ props.values.description || 'No description' }}</p>
         </div>
-        
-        <div>
-          <h5 class="text-sm font-medium text-gray-500">Region</h5>
-          <p class="mt-1 text-sm text-gray-900">{{ values.region }}</p>
+
+        <div class="border-b border-[#E5E7EB] p-6 flex flex-col md:flex-row">
+          <h5 class="text-sm font-medium text-gray-500 md:w-1/3 w-full">Region</h5>
+          <p class="mt-1 text-sm text-gray-900">{{ props.values.region }}</p>
         </div>
-        
-        <div>
-          <h5 class="text-sm font-medium text-gray-500">Instance Type</h5>
-          <p class="mt-1 text-sm text-gray-900">{{ values.instanceType }}</p>
+
+        <div class="border-b border-[#E5E7EB] p-6 flex flex-col md:flex-row">
+          <h5 class="text-sm font-medium text-gray-500 md:w-1/3 w-full">Instance Type</h5>
+          <p class="mt-1 text-sm text-gray-900">{{ props.values.instanceType }}</p>
         </div>
-        
-        <div>
-          <h5 class="text-sm font-medium text-gray-500">Resources</h5>
+
+        <div class="border-b border-[#E5E7EB] p-6 flex flex-col md:flex-row">
+          <h5 class="text-sm font-medium text-gray-500 md:w-1/3 w-full">Resources</h5>
           <p class="mt-1 text-sm text-gray-900">
-            {{ values.vCPU }} vCPU, {{ values.memory }} GB Memory, {{ values.storage }} GB Storage
+            {{ props.values.vCPU }} vCPU, {{ props.values.memory }} GB Memory, {{ props.values.storage }} GB Storage
           </p>
         </div>
-        
-        <div>
-          <h5 class="text-sm font-medium text-gray-500">Network</h5>
+
+        <div class="border-b border-[#E5E7EB] p-6 flex w-full flex-col md:flex-row">
+          <h5 class="text-sm font-medium text-gray-500 md:w-1/3 w-full">Network</h5>
           <p class="mt-1 text-sm text-gray-900">
-            VPC: {{ values.vpc }}<br>
-            Subnet: {{ values.subnet }}<br>
-            Public IP: {{ values.assignPublicIP ? 'Yes' : 'No' }}
+            VPC: {{ props.values.vpc || 'Not specified' }}<br />
+            Subnet: {{ props.values.subnet || 'Not specified' }}<br />
+            Public IP: {{ props.values.assignPublicIP ? 'Yes' : 'No' }}
           </p>
         </div>
-        
-        <div>
-          <h5 class="text-sm font-medium text-gray-500">Security Groups</h5>
+
+        <div class="p-6 flex flex-col md:flex-row">
+          <h5 class="text-sm font-medium text-gray-500 md:w-1/3 w-full">Security Groups</h5>
           <ul class="mt-1 text-sm text-gray-900 list-disc list-inside">
-            <li v-for="group in values.securityGroups" :key="group">{{ group }}</li>
+            <li v-for="group in props.values.securityGroups" :key="group">{{ group }}</li>
+            <li v-if="!props.values.securityGroups.length">None selected</li>
           </ul>
         </div>
       </div>
     </div>
 
     <div class="mt-8">
-      <p class="text-sm text-gray-600 mb-4">
-        Your service is ready for deployment. Click the Deploy button below to start the deployment process.
-      </p>
-      
-      <div class="flex justify-between">
-        <button 
-          type="button" 
-          @click="$emit('back')"
-          class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-        >
-          Back
-        </button>
-        
-        <div class="space-x-3">
-          <button 
-            type="button" 
-            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-          >
-            Delete
-          </button>
-          <button 
-            type="submit" 
-            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Deploy
-          </button>
-        </div>
+      <div class="bg-[#EFF6FF] rounded-lg p-4 mb-14">
+        <h3 class="text-[#1E40AF] font-medium">Ready to deploy</h3>
+        <p class="text-[#1E3A8A]">
+          Your service is ready for deployment. Click the Deploy button below to start the deployment process.
+        </p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useForm } from 'vee-validate';
+import { ref, watch } from 'vue';
 import type { CloudServiceForm } from '../../types/cloud-service';
 
-// Define emits with TypeScript
-const emit = defineEmits<{
-  (e: 'back'): void;
+// Define props for values
+const props = defineProps<{
+  values: CloudServiceForm;
 }>();
 
-// Use vee-validate's useForm instead of Formik's useFormikContext
-const { values } = useForm<CloudServiceForm>();
+// Reactive variable to store the image URL for display
+const imageUrl = ref<string | null>(null);
+
+// Watch for changes in values.coverImage (e.g., when editing an existing service)
+watch(
+  () => props.values.coverImage,
+  (newFile) => {
+    if (newFile instanceof File) {
+      // If a file is present, convert it to a URL for display
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        imageUrl.value = e.target?.result as string;
+      };
+      reader.readAsDataURL(newFile);
+    } else {
+      imageUrl.value = null;
+    }
+  },
+  { immediate: true } // Run immediately to handle initial value
+);
 </script>

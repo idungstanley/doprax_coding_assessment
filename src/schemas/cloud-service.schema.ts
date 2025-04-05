@@ -16,17 +16,26 @@ const securityGroupSchema = z.enum([
     'Internal Only'
 ]);
 
+const regionSchema = z.enum([
+    'US West (N. California)',
+    'US East (N. Virginia)',
+    'Europe (Ireland)',
+    'Asia Pacific (Tokyo)',
+], {
+    required_error: 'Region is required',
+});
+
 export const cloudServiceSchema = z.object({
-    serviceName: z.string()
+    serviceName: z
+        .string()
         .min(3, 'Service name must be at least 3 characters')
-        .max(50, 'Service name cannot exceed 50 characters'),
+        .max(50, 'Service name cannot exceed 50 characters')
+        .nonempty('Service name is required'),
+    region: regionSchema, // z.enum([...], { required_error: 'Region is required' })
 
     description: z.string()
         .max(200, 'Description cannot exceed 200 characters')
         .optional(),
-
-    region: z.string()
-        .nonempty('Region is required'),
 
     instanceType: instanceTypeSchema,
 
@@ -48,5 +57,6 @@ export const cloudServiceSchema = z.object({
     assignPublicIP: z.boolean(),
 
     securityGroups: z.array(securityGroupSchema)
-        .min(1, 'Select at least one security group')
+        .min(1, 'Select at least one security group'),
+    coverImage: z.instanceof(File).optional().nullable(),
 });
