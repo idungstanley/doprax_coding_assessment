@@ -25,8 +25,12 @@
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="service in services" :key="service.id" class="bg-white rounded-lg shadow-md overflow-hidden">
-        <div class="p-6">
+      <div
+        v-for="service in services"
+        :key="service.id"
+        class="bg-white rounded-lg border border-gray-200 overflow-hidden"
+      >
+        <div class="p-6 flex flex-col">
           <div class="flex justify-between">
             <h3 class="text-lg font-medium text-gray-900">{{ service.serviceName }}</h3>
             <span
@@ -43,43 +47,27 @@
               {{ service.status }}
             </span>
           </div>
-          <p class="mt-1 text-sm text-gray-500">{{ service.description || 'No description' }}</p>
-
-          <div class="mt-4 grid grid-cols-2 gap-4">
-            <div>
-              <p class="text-sm text-gray-500">Instance Type</p>
-              <p class="text-sm font-medium">{{ service.instanceType }}</p>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">Region</p>
-              <p class="text-sm font-medium">{{ service.region }}</p>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">vCPUs</p>
-              <p class="text-sm font-medium">{{ service.vCPU }}</p>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">Memory</p>
-              <p class="text-sm font-medium">{{ service.memory }} GB</p>
-            </div>
-          </div>
+          <p class="mt-1 text-sm text-gray-500 text-left">{{ service.description || 'No description' }}</p>
         </div>
 
-        <div class="bg-gray-50 px-6 py-3 flex justify-between">
-          <router-link :to="`/services/${service.id}`" class="text-sm font-medium text-blue-600 hover:text-blue-500">
-            View Details
-          </router-link>
-          <div class="space-x-4">
+        <div class="border-gray-200 border-t px-6 py-3 flex justify-between">
+          <div class="space-x-4 flex items-center">
             <router-link
               :to="`/services/edit/${service.id}`"
               class="text-sm font-medium text-gray-600 hover:text-gray-500"
             >
-              Edit
+              <img src="@/assets/icons/editIcon.svg" alt="delete icon" />
             </router-link>
-            <button @click="confirmDelete(service.id)" class="text-sm font-medium text-red-600 hover:text-red-500">
-              Delete
+            <button
+              @click="confirmDelete(service.id)"
+              class="text-sm font-medium text-red-600 hover:text-red-500 cursor-pointer"
+            >
+              <img src="@/assets/icons/deleteIcon.svg" alt="delete icon" />
             </button>
           </div>
+          <router-link :to="`/services/${service.id}`" class="text-sm font-medium text-blue-600 hover:text-blue-500">
+            View Details
+          </router-link>
         </div>
       </div>
     </div>
@@ -94,53 +82,38 @@
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
         <div
-          class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+          class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full justify-center items-center"
         >
-          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <div class="sm:flex sm:items-start">
-              <div
-                class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
-              >
-                <svg
-                  class="h-6 w-6 text-red-600"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
-                </svg>
-              </div>
-              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Delete cloud service</h3>
-                <div class="mt-2">
-                  <p class="text-sm text-gray-500">
-                    Are you sure you want to delete this cloud service? This action cannot be undone.
-                  </p>
+          <div class="flex flex-col items-center justify-center h-[280px]">
+            <div class="flex flex-col justify-center items-center grow w-full h-full">
+              <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex flex-col items-center">
+                <div class="flex flex-col items-center justify-center gap-4">
+                  <img src="../assets/icons/deleteIcon.svg" alt="delete icon" class="h-6 w-6 text-red-600" />
+                  <div class="mt-3 text-center sm:mt-0 sm:ml-4">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Delete this cloud service</h3>
+                    <div class="mt-2">
+                      <p class="text-sm text-gray-500">Are you sure you want to delete this cloud service?</p>
+                    </div>
+                  </div>
                 </div>
               </div>
+              <div class="px-4 py-3 sm:px-6 gap-4 flex items-center justify-center">
+                <button
+                  type="button"
+                  @click="showDeleteModal = false"
+                  class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm py-2 px-2 h-[38px] text-nowrap bg-white text-base font-medium text-gray-700 hover:bg-gray-50 w-fit focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  No, Cancel
+                </button>
+                <button
+                  type="button"
+                  @click="deleteService"
+                  class="w-full inline-flex justify-center h-[38px] items-center rounded-md border border-transparent px-2 shadow-sm py-3 bg-[#EF4444] text-base font-medium text-white hover:bg-red-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Yes delete
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-            <button
-              type="button"
-              @click="deleteService"
-              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-            >
-              Yes, delete
-            </button>
-            <button
-              type="button"
-              @click="showDeleteModal = false"
-              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-            >
-              Cancel
-            </button>
           </div>
         </div>
       </div>

@@ -54,7 +54,7 @@ const {
   errors,
   setValues,
   validate,
-  setFieldValue
+  setFieldValue,
 } = useForm<CloudServiceForm>({
   validationSchema: toTypedSchema(cloudServiceSchema),
   initialValues: {
@@ -69,8 +69,8 @@ const {
     subnet: '',
     assignPublicIP: false,
     securityGroups: [],
-    coverImage: null
-  }
+    coverImage: null,
+  },
 });
 
 const currentStep = ref(0);
@@ -88,24 +88,39 @@ const requiredFieldsPerStep: CloudServiceFormKeys[][] = [
   // Step 3: Network
   ['vpc', 'subnet', 'securityGroups'],
   // Step 4: Review (validate all fields)
-  Object.keys(cloudServiceSchema.shape) as CloudServiceFormKeys[]
+  Object.keys(cloudServiceSchema.shape) as CloudServiceFormKeys[],
 ];
 
 const steps = [
   { title: 'Service Basics', subtitle: 'Define your service details', component: StepServiceBasics },
   { title: 'Resources', subtitle: 'Configure compute resources', component: StepResources },
   { title: 'Network', subtitle: 'Set up network configuration', component: StepNetwork },
-  { title: 'Review', subtitle: 'Review and deploy', component: StepReview }
+  { title: 'Review', subtitle: 'Review and deploy', component: StepReview },
 ];
 
-// Load service data if in edit mode
-onMounted(async () => {
+// Load service data from localStorage if in edit mode
+onMounted(() => {
   if (isEditMode.value) {
-    await servicesStore.loadServices();
-    const service = servicesStore.getServiceById(route.params.id as string);
-    if (service) {
-      const { id, createdAt, updatedAt, status, ...formData } = service;
-      setValues(formData);
+    const serviceId = route.params.id as string;
+    const storedService = localStorage.getItem(`cloudService_${serviceId}`);
+    
+    if (storedService) {
+      try {
+        const serviceData = JSON.parse(storedService);
+        // Since localStorage can't store File objects, coverImage might be a Base64 string or null
+        const formData: CloudServiceForm = {
+          ...serviceData,
+          coverImage: null, // We'll handle coverImage separately if needed
+        };
+        setValues(formData);
+        console.log('Loaded service from localStorage:', formData);
+      } catch (error) {
+        console.error('Failed to parse service data from localStorage:', error);
+        // Optionally, fall back to default values or show an error to the user
+      }
+    } else {
+      console.warn(`No service found in localStorage for ID: ${serviceId}`);
+      // Optionally, redirect to a "not found" page or show an error
     }
   }
 });
@@ -164,9 +179,7 @@ const updateCoverImage = (file: File | null) => {
 const onSubmit: SubmissionHandler<CloudServiceForm> = async (values) => {
   const result = await validate(); // Validate the entire form on submit
   console.log('Form Values:', values);
-    console.log('Form Errors:', errors.value);
-  console.log('Form Errors:');
-
+  console.log('Form Errors:', errors.value);
 
   if (!result.valid) {
     console.log('Form submission failed: Entire form is invalid', errors.value);
@@ -174,19 +187,37 @@ const onSubmit: SubmissionHandler<CloudServiceForm> = async (values) => {
   }
 
   try {
+    // Prepare the data to save (excluding coverImage since localStorage can't store File objects)
+    const dataToSave = {
+      ...values,
+      coverImage: null, // Exclude the File object
+    };
+
     if (isEditMode.value) {
+      // In edit mode, update the service in localStorage
+      const serviceId = route.params.id as string;
+      localStorage.setItem(`cloudService_${serviceId}`, JSON.stringify(dataToSave));
+      console.log(`Updated service in localStorage with ID: ${serviceId}`);
+      
+      // Optionally, update in servicesStore if you still want to sync with the store
       await servicesStore.updateService({
-        id: route.params.id as string,
-        updates: values
+        id: serviceId,
+        updates: values,
       });
     } else {
+      // In create mode, generate a new ID and save to localStorage
+      const newId = Date.now().toString(); // Simple ID generation; you might want a more robust method
+      localStorage.setItem(`cloudService_${newId}`, JSON.stringify(dataToSave));
+      console.log(`Created new service in localStorage with ID: ${newId}`);
+      
+      // Optionally, save to servicesStore
       await servicesStore.createService(values);
     }
+    
     router.push({ name: 'services-list' });
   } catch (error) {
     console.error('Failed to save service:', error);
     // Handle error (e.g., show toast/notification)
-    // setErrors({ fieldName: 'Error message' });
   }
 };
 </script>
