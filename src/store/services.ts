@@ -7,13 +7,13 @@ export const useServicesStore = defineStore('services', {
         services: [] as CloudService[],
         currentService: null as CloudService | null,
         isLoading: false,
-        error: null as string | null
+        error: null as string | null,
     }),
 
     getters: {
         allServices: (state) => state.services,
-        getServiceById: (state) => (id: string) => state.services.find(service => service.id === id),
-        currentServiceDetails: (state) => state.currentService
+        getServiceById: (state) => (id: string) => state.services.find((service) => service.id === id),
+        currentServiceDetails: (state) => state.currentService,
     },
 
     actions: {
@@ -34,11 +34,12 @@ export const useServicesStore = defineStore('services', {
             try {
                 this.isLoading = true;
                 this.error = null;
-                const newService = StorageService.createService({
+                // Await the result of StorageService.createService
+                const newService = await StorageService.createService({
                     ...serviceData,
                     status: 'Running',
                     createdAt: new Date(),
-                    updatedAt: new Date()
+                    updatedAt: new Date(),
                 });
                 this.services.push(newService);
                 return newService;
@@ -54,21 +55,23 @@ export const useServicesStore = defineStore('services', {
             try {
                 this.isLoading = true;
                 this.error = null;
-                const updatedService = StorageService.updateService(id, {
+                // Await the result of StorageService.updateService
+                const updatedService = await StorageService.updateService(id, {
                     ...updates,
-                    updatedAt: new Date()
+                    updatedAt: new Date(),
                 });
 
                 if (updatedService) {
-                    const index = this.services.findIndex(s => s.id === id);
+                    const index = this.services.findIndex((s) => s.id === id);
                     if (index !== -1) {
                         this.services.splice(index, 1, updatedService);
                     }
                     if (this.currentService?.id === id) {
                         this.currentService = updatedService;
                     }
+                    return updatedService;
                 }
-                return updatedService;
+                return undefined;
             } catch (error) {
                 this.error = error instanceof Error ? error.message : 'Failed to update service';
                 throw error;
@@ -83,7 +86,7 @@ export const useServicesStore = defineStore('services', {
                 this.error = null;
                 const deleted = StorageService.deleteService(id);
                 if (deleted) {
-                    this.services = this.services.filter(service => service.id !== id);
+                    this.services = this.services.filter((service) => service.id !== id);
                     if (this.currentService?.id === id) {
                         this.currentService = null;
                     }
@@ -100,8 +103,9 @@ export const useServicesStore = defineStore('services', {
         setCurrentService(service: CloudService | null) {
             this.currentService = service;
         },
+
         setCurrentServiceById(id: string) {
-            this.currentService = this.services.find(s => s.id === id) || null;
+            this.currentService = this.services.find((s) => s.id === id) || null;
         },
 
         clearCurrentService() {
@@ -113,15 +117,15 @@ export const useServicesStore = defineStore('services', {
         },
 
         async getServiceStatus(id: string) {
-            const service = this.services.find(s => s.id === id);
+            const service = this.services.find((s) => s.id === id);
             return service?.status || null;
         },
 
         async updateServiceStatus(id: string, status: 'Running' | 'Deploying' | 'Stopped' | 'Error') {
             return this.updateService({
                 id,
-                updates: { status, updatedAt: new Date() }
+                updates: { status, updatedAt: new Date() },
             });
-        }
-    }
+        },
+    },
 });
