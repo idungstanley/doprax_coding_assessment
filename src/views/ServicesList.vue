@@ -10,8 +10,6 @@
 
     <div v-else-if="services.length === 0" class="text-center py-12">
       <img src="../assets/icons/cloud.svg" alt="Cloud Icon" class="mx-auto h-12 w-12 text-gray-400" />
-      <!-- <CloudIcon class="w-6 h-6 mr-2 text-gray-600" /> -->
-
       <h3 class="mt-2 text-lg font-medium text-gray-900">No cloud services yet</h3>
       <p class="mt-1 text-sm text-gray-500">Click on the button below to create and manage a cloud service</p>
       <div class="mt-6">
@@ -25,51 +23,13 @@
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div
+      <ServiceCard
         v-for="service in services"
         :key="service.id"
-        class="bg-white rounded-lg border border-gray-200 overflow-hidden"
-      >
-        <div class="p-6 flex flex-col">
-          <div class="flex justify-between">
-            <h3 class="text-lg font-medium text-gray-900">{{ service.serviceName }}</h3>
-            <span
-              :class="`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                service.status === 'Running'
-                  ? 'bg-green-100 text-green-800'
-                  : service.status === 'Deploying'
-                  ? 'bg-blue-100 text-blue-800'
-                  : service.status === 'Stopped'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : 'bg-red-100 text-red-800'
-              }`"
-            >
-              {{ service.status }}
-            </span>
-          </div>
-          <p class="mt-1 text-sm text-gray-500 text-left">{{ service.description || 'No description' }}</p>
-        </div>
-
-        <div class="border-gray-200 border-t px-6 py-3 flex justify-between">
-          <div class="space-x-4 flex items-center">
-            <router-link
-              :to="`/services/edit/${service.id}`"
-              class="text-sm font-medium text-gray-600 hover:text-gray-500"
-            >
-              <img src="@/assets/icons/editIcon.svg" alt="delete icon" />
-            </router-link>
-            <button
-              @click="confirmDelete(service.id)"
-              class="text-sm font-medium text-red-600 hover:text-red-500 cursor-pointer"
-            >
-              <img src="@/assets/icons/deleteIcon.svg" alt="delete icon" />
-            </button>
-          </div>
-          <router-link :to="`/services/${service.id}`" class="text-sm font-medium text-blue-600 hover:text-blue-500">
-            View Details
-          </router-link>
-        </div>
-      </div>
+        :service="service"
+        @delete="confirmDelete"
+        @view-details="openDetailsModal"
+      />
     </div>
 
     <!-- Delete Confirmation Modal -->
@@ -79,7 +39,7 @@
           <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
 
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true"></span>
 
         <div
           class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full justify-center items-center"
@@ -118,6 +78,121 @@
         </div>
       </div>
     </div>
+
+    <!-- Details Modal -->
+    <div
+      v-if="showDetailsModal"
+      class="fixed inset-0 z-20 overflow-y-auto w-screen h-screen"
+      @click.self="showDetailsModal = false"
+    >
+      <div
+        class="fixed inset-0 bg-gray-500 opacity-75 transition-opacity"
+        aria-hidden="true"
+      ></div>
+
+      <!-- Modal Content -->
+      <div
+        :class="[
+          'fixed bg-white shadow-xl transform transition-all duration-300',
+          'sm:w-full',
+          'md:h-full md:w-[40%]',
+          'w-full right-0 bottom-0 h-[90vh]',
+          showDetailsModal
+            ? 'md:translate-x-0 translate-y-0'
+            : 'md:translate-x-full translate-y-full'
+        ]"
+      >
+        <div class="flex flex-col h-full">
+          <!-- Modal Header -->
+          <div class="flex justify-between items-center p-4 border-b border-gray-200">
+            <h2 class="text-lg font-medium text-gray-900">Cloud service details</h2>
+            <div class="flex space-x-2">
+              <router-link
+                :to="`/services/edit/${selectedService?.id}`"
+                class="text-gray-600 hover:text-gray-500"
+              >
+                <img src="@/assets/icons/editIcon.svg" alt="edit icon" class="h-5 w-5" />
+              </router-link>
+              <button
+                @click="confirmDelete(selectedService?.id as string)"
+                class="text-red-600 hover:text-red-500"
+              >
+                <img src="@/assets/icons/deleteIcon.svg" alt="delete icon" class="h-5 w-5" />
+              </button>
+              <button @click="showDetailsModal = false" class="text-gray-600 hover:text-gray-500">
+                <svg
+                  class="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="flex-1 overflow-y-auto bg-gray-100 m-4 text-left rounded-md">
+            <!-- Cover Image -->
+            <div class="mb-4 border-b border-gray-200 p-4 ">
+              <h3 class="text-sm font-medium text-gray-500 uppercase">Cover Image</h3>
+              <div class="mt-2">
+                <!-- <img
+                  v-if="selectedService?.coverImage"
+                  :src="getImageSrc(selectedService.coverImage)"
+                  alt="Cover Image"
+                  class="w-32 h-32 rounded-md object-cover"
+                /> -->
+                <p class="text-sm text-gray-500">No cover image</p>
+              </div>
+            </div>
+
+            <!-- Service Details -->
+            <div class="space-y-4">
+              <div class="border-b border-gray-200 p-4">
+                <h3 class="text-sm font-medium text-gray-500 uppercase">Name</h3>
+                <p class="mt-1 text-gray-900">{{ selectedService?.serviceName || 'N/A' }}</p>
+              </div>
+              <div class="border-b border-gray-200 p-4">
+                <h3 class="text-sm font-medium text-gray-500 uppercase">Description</h3>
+                <p class="mt-1 text-gray-900">{{ selectedService?.description || 'N/A' }}</p>
+              </div>
+              <div class="border-b border-gray-200 p-4">
+                <h3 class="text-sm font-medium text-gray-500 uppercase">Region</h3>
+                <p class="mt-1 text-gray-900">{{ selectedService?.region || 'N/A' }}</p>
+              </div>
+              <div class="border-b border-gray-200 p-4">
+                <h3 class="text-sm font-medium text-gray-500 uppercase">Instance Type</h3>
+                <p class="mt-1 text-gray-900">{{ selectedService?.instanceType || 'N/A' }}</p>
+              </div>
+              <div class="border-b border-gray-200 p-4">
+                <h3 class="text-sm font-medium text-gray-500 uppercase">Resources</h3>
+                <p class="mt-1 text-gray-900">
+                  {{ selectedService?.vCPU || 'N/A' }} vCPU, {{ selectedService?.memory || 'N/A' }} GB Memory,
+                  {{ selectedService?.storage || 'N/A' }} GB Storage
+                </p>
+              </div>
+              <div class="p-4">
+                <h3 class="text-sm font-medium text-gray-500 uppercase">Network</h3>
+                <p class="mt-1 text-gray-900">
+                  VPC: {{ selectedService?.vpc || 'N/A' }}<br />
+                  Subnet: {{ selectedService?.subnet || 'N/A' }}<br />
+                  Public IP: {{ selectedService?.assignPublicIP ? 'Yes' : 'No' }}<br />
+                  Security Groups: {{ selectedService?.securityGroups?.join(', ') || 'N/A' }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -125,15 +200,16 @@
 import { ref, onMounted } from 'vue';
 import { useServicesStore } from '../store/services';
 import { storeToRefs } from 'pinia';
-import { useRouter } from 'vue-router';
-import CloudIcon from '../assets/icons/cloud.svg?component';
+import ServiceCard from '../components/ServiceCard.vue';
+import type { CloudService } from '../types/cloud-service';
 
 const servicesStore = useServicesStore();
-const router = useRouter();
 
 const { services, isLoading } = storeToRefs(servicesStore);
 const showDeleteModal = ref(false);
 const serviceToDelete = ref('');
+const showDetailsModal = ref(false);
+const selectedService = ref<CloudService | null>(null);
 
 onMounted(async () => {
   await servicesStore.loadServices();
@@ -145,8 +221,16 @@ const confirmDelete = (id: string) => {
 };
 
 const deleteService = async () => {
-  await servicesStore.deleteService(serviceToDelete.value);
+  // Remove from localStorage
+  servicesStore.deleteService(serviceToDelete.value);
+  services.value = services.value.filter((service) => service.id !== serviceToDelete.value);
   showDeleteModal.value = false;
+  showDetailsModal.value = false; // Close details modal if open
+};
+
+const openDetailsModal = (service: CloudService) => {
+  selectedService.value = service;
+  showDetailsModal.value = true;
 };
 </script>
 

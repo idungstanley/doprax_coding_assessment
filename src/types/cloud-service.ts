@@ -15,7 +15,7 @@ export interface CloudService {
     createdAt: Date;
     updatedAt: Date;
     status: string
-    coverImage?: File | null;
+    coverImage?: File | null | string;
 }
 
 export interface CloudServiceForm extends Omit<CloudService, 'id' | 'createdAt' | 'updatedAt' | 'status'> {

@@ -16,9 +16,8 @@
             @change="handleChange('vpc', $event)"
             class="mt-1 block w-full shadow pr-10 py-2 text-base border-gray-300 text-black focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
           >
-            <option value="development">Development VPC</option>
-            <option value="production">Production VPC</option>
-            <option value="staging">Staging VPC</option>
+            <option value="development-vpc">Development VPC</option>
+            <option value="production-vpc">Production VPC</option>
           </Field>
           <ErrorMessage name="vpc" class="mt-1 text-sm text-red-600" />
         </div>
@@ -34,9 +33,8 @@
             @change="handleChange('subnet', $event)"
             class="mt-1 block shadow w-full pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
           >
-            <option value="development">Development Subnet (AZ-b)</option>
-            <option value="production">Production Subnet (AZ-a)</option>
-            <option value="staging">Staging Subnet (AZ-c)</option>
+            <option value="default-subnet-(Az-a)">Default Subnet (AZ-a)</option>
+            <option value="default-subnet-(Az-b)">Default Subnet (AZ-b)</option>
           </Field>
           <ErrorMessage name="subnet" class="mt-1 text-sm text-red-600" />
         </div>
