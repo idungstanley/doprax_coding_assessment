@@ -1,6 +1,5 @@
 <template>
   <div class="py-6">
-    <!-- Steps Indicator -->
     <div class="flex flex-col md:flex-row gap-8 mt-4 h-full">
       <div v-for="(step, index) in steps" :key="index" class="mb-4 md:mb-0">
         <div
@@ -29,14 +28,11 @@
       </div>
     </div>
 
-    <!-- Content Area -->
     <div class="mt-6">
       <slot name="content">
         <p class="text-gray-600">Content for step {{ currentStep + 1 }} goes here.</p>
       </slot>
     </div>
-
-    <!-- Navigation Buttons -->
     <div class="mt-8 flex justify-between">
       <button
         type="button"
@@ -46,8 +42,6 @@
       >
         Back
       </button>
-
-      <!-- Show "Next" button for all steps except the last one, and "Deploy" on the last step -->
       <button
         v-if="currentStep < steps.length - 1"
         type="button"
@@ -59,7 +53,7 @@
       <button
         v-else
         type="submit"
-        @click="onSubmit ? onSubmit() : emit('next')"
+        @click="onSubmit"
         class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
       >
         Deploy
@@ -70,9 +64,9 @@
 
 <script setup lang="ts">
 defineProps<{
-  currentStep: number; // Use TypeScript type directly
+  currentStep: number;
   steps: Array<{ title: string; subtitle: string; component?: any }>;
-  onSubmit?: (values: any) => void; // Optional prop for the submit handler
+  onSubmit?: (values: any) => void;
 }>();
 
 const emit = defineEmits<{

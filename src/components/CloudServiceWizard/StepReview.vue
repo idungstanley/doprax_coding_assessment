@@ -8,8 +8,6 @@
 
     <div class="bg-[#F9FAFB] rounded-lg">
       <h4 class="text-base font-medium text-[#111827] mb-4 border-b border-[#E5E7EB] p-6">Service Summary</h4>
-
-      <!-- Cover Image -->
       <div class="mb-6 flex flex-col md:flex-row border-b border-[#E5E7EB] p-6">
         <label class="block text-sm font-medium text-gray-700 mb-1 md:w-1/3 w-full">Cover image</label>
         <div class="mt-1 flex justify-center items-center px-6 pt-5 pb-6 bg-gray-200 rounded-md w-[100px] h-[100px]">
@@ -24,7 +22,6 @@
         </div>
       </div>
 
-      <!-- Service Details -->
       <div class="flex flex-col gap-2">
         <div class="border-b border-[#E5E7EB] p-6 flex flex-col md:flex-row">
           <h5 class="text-sm font-medium text-gray-500 md:w-1/3 w-full">Service Name</h5>
@@ -87,20 +84,16 @@
 import { ref, watch } from 'vue';
 import type { CloudServiceForm } from '../../types/cloud-service';
 
-// Define props for values
 const props = defineProps<{
   values: CloudServiceForm;
 }>();
 
-// Reactive variable to store the image URL for display
 const imageUrl = ref<string | null>(null);
 
-// Watch for changes in values.coverImage (e.g., when editing an existing service)
 watch(
   () => props.values.coverImage,
   (newFile) => {
     if (newFile instanceof File) {
-      // If a file is present, convert it to a URL for display
       const reader = new FileReader();
       reader.onload = (e) => {
         imageUrl.value = e.target?.result as string;
@@ -110,6 +103,6 @@ watch(
       imageUrl.value = null;
     }
   },
-  { immediate: true } // Run immediately to handle initial value
+  { immediate: true }
 );
 </script>

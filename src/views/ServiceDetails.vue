@@ -50,7 +50,6 @@
       </div>
       <div class="px-4 py-5 sm:p-0">
         <dl class="sm:divide-y sm:divide-gray-200">
-          <!-- Status -->
           <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt class="text-sm font-medium text-gray-500">Status</dt>
             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -65,19 +64,16 @@
             </dd>
           </div>
           
-          <!-- Instance Type -->
           <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt class="text-sm font-medium text-gray-500">Instance Type</dt>
             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ service.instanceType }}</dd>
           </div>
           
-          <!-- Region -->
           <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt class="text-sm font-medium text-gray-500">Region</dt>
             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ service.region }}</dd>
           </div>
           
-          <!-- Resources -->
           <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt class="text-sm font-medium text-gray-500">Resources</dt>
             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -85,7 +81,6 @@
             </dd>
           </div>
           
-          <!-- Network -->
           <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt class="text-sm font-medium text-gray-500">Network</dt>
             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -95,7 +90,6 @@
             </dd>
           </div>
           
-          <!-- Security Groups -->
           <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt class="text-sm font-medium text-gray-500">Security Groups</dt>
             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -105,7 +99,6 @@
             </dd>
           </div>
           
-          <!-- Created -->
           <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt class="text-sm font-medium text-gray-500">Created</dt>
             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -113,7 +106,6 @@
             </dd>
           </div>
           
-          <!-- Last Updated -->
           <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">

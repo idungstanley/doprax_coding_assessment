@@ -40,11 +40,9 @@ import { cloudServiceSchema } from '../schemas/cloud-service.schema';
 import type { CloudServiceForm } from '../types/cloud-service';
 import { toTypedSchema } from '@vee-validate/zod';
 
-// Router and store setup
 const router = useRouter();
 const servicesStore = useServicesStore();
 
-// Form setup
 const {
   handleSubmit: validateForm,
   values,
@@ -71,18 +69,12 @@ const {
 
 const currentStep = ref(0);
 
-// Define a type for the keys of CloudServiceForm
 type CloudServiceFormKeys = keyof CloudServiceForm;
 
-// Define required fields for each step
 const requiredFieldsPerStep: CloudServiceFormKeys[][] = [
-  // Step 1: Service Basics
   ['serviceName', 'region'],
-  // Step 2: Resources
   ['instanceType', 'vCPU', 'memory', 'storage'],
-  // Step 3: Network
   ['vpc', 'subnet', 'securityGroups'],
-  // Step 4: Review (validate all fields)
   Object.keys(cloudServiceSchema.shape) as CloudServiceFormKeys[]
 ];
 
@@ -93,7 +85,6 @@ const steps = [
   { title: 'Review', subtitle: 'Review and deploy', component: StepReview }
 ];
 
-// Watch for changes in values to debug state updates
 watch(
   () => values,
   (newValues) => {
@@ -103,16 +94,13 @@ watch(
 );
 
 const nextStep = async () => {
-  // Validate the entire form
   const result = await validate();
   console.log('Validation Result for Step', currentStep.value + 1, ':', result);
   console.log('Form Errors:', errors.value);
   console.log('Form Values:', values);
 
-  // Get the fields to validate for the current step
   const fieldsToValidate = requiredFieldsPerStep[currentStep.value];
 
-  // Check if there are any errors for the fields in the current step
   const hasErrorsInCurrentStep = fieldsToValidate.some(
     (field) => (errors.value as Record<CloudServiceFormKeys, string | undefined>)[field]
   );
@@ -132,23 +120,19 @@ const prevStep = () => {
   }
 };
 
-// Handle field updates from the child
 const updateField = (field: keyof CloudServiceForm, value: any) => {
   setFieldValue(field, value);
   console.log(`Updated ${field} to:`, value);
 };
 
-// Handle cover image update
 const updateCoverImage = (file: File | null) => {
   setFieldValue('coverImage', file);
 };
 
-// Form submission handler (validate all fields on submit)
 const onSubmit: SubmissionHandler<CloudServiceForm> = async (values) => {
   const result = await validate();
   console.log('Form Values:', values);
   console.log('Form Errors:', errors.value);
-  console.log('Form Errors:');
 
   if (!result.valid) {
     console.log('Form submission failed: Entire form is invalid', errors.value);

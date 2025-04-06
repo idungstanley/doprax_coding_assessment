@@ -5,7 +5,6 @@
 
     <div class="space-y-6">
       <div class="flex flex-col md:flex-row items-center w-full gap-3">
-        <!-- VPC -->
         <div class="w-full">
           <label for="vpc" class="block text-sm font-medium text-gray-700">Virtual Private Cloud (VPC) <span class="text-red-400 ml-2">*</span></label>
           <Field
@@ -14,7 +13,7 @@
             as="select"
             :value="props.values.vpc"
             @change="handleChange('vpc', $event)"
-            class="mt-1 block w-full shadow pr-10 py-2 text-base border-gray-300 text-black focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+            class="mt-1 block w-full border-b pr-10 py-2 text-base border-gray-300 text-black focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           >
             <option value="development-vpc">Development VPC</option>
             <option value="production-vpc">Production VPC</option>
@@ -22,7 +21,6 @@
           <ErrorMessage name="vpc" class="mt-1 text-sm text-red-600" />
         </div>
 
-        <!-- Subnet -->
         <div class="w-full">
           <label for="subnet" class="block text-sm font-medium text-gray-700">Subnet <span class="text-red-400 ml-2">*</span></label>
           <Field
@@ -31,7 +29,7 @@
             as="select"
             :value="props.values.subnet"
             @change="handleChange('subnet', $event)"
-            class="mt-1 block shadow w-full pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+            class="mt-1 block border-b w-full pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           >
             <option value="default-subnet-(Az-a)">Default Subnet (AZ-a)</option>
             <option value="default-subnet-(Az-b)">Default Subnet (AZ-b)</option>
@@ -40,7 +38,6 @@
         </div>
       </div>
 
-      <!-- Public IP -->
       <div class="flex items-start flex-col text-xs">
         <div class="flex items-center h-5 gap-1">
           <Field
@@ -56,7 +53,6 @@
         <p class="text-gray-500">Enable this to make your service accessible from the Internet</p>
       </div>
 
-      <!-- Security Groups -->
       <div class="flex flex-col text-xs">
         <label class="block font-medium text-gray-700 mb-1">Security Groups <span class="text-red-400 ml-2">*</span></label>
         <p class="text-[#6B7280] mb-2">Select the security groups to apply to your service</p>
@@ -88,13 +84,11 @@
 import { Field, ErrorMessage } from 'vee-validate';
 import type { CloudServiceForm } from '../../types/cloud-service';
 
-// Define props for values and errors
 const props = defineProps<{
   values: CloudServiceForm;
   errors: Record<string, string>;
 }>();
 
-// Define emits for field updates
 const emit = defineEmits<{
   (e: 'update:field', field: keyof CloudServiceForm, value: any): void;
 }>();
@@ -122,40 +116,35 @@ const securityGroups = [
   },
 ] as const;
 
-// Function to handle changes to form fields (vpc, subnet, assignPublicIP)
 const handleChange = (field: keyof CloudServiceForm, event: Event) => {
   const target = event.target as HTMLInputElement | HTMLSelectElement;
   let value: string | boolean;
 
   if (field === 'assignPublicIP') {
-    value = (target as HTMLInputElement).checked; // Use 'checked' for checkbox
+    value = (target as HTMLInputElement).checked;
   } else {
-    value = target.value; // Use 'value' for select elements
+    value = target.value;
   }
 
   emit('update:field', field, value);
 };
 
-// Function to handle changes to securityGroups (array field)
 const handleSecurityGroupChange = (groupValue: string, event: Event) => {
   const target = event.target as HTMLInputElement;
   const isChecked = target.checked;
   const currentGroups = [...props.values.securityGroups];
 
   if (isChecked) {
-    // Add the group if checked and not already in the array
     if (!currentGroups.includes(groupValue)) {
       emit('update:field', 'securityGroups', [...currentGroups, groupValue]);
     }
   } else {
-    // Remove the group if unchecked
     emit('update:field', 'securityGroups', currentGroups.filter((group) => group !== groupValue));
   }
 };
 </script>
 
 <style scoped>
-/* Ensure the text in select options is visible */
 select option {
   color: black !important;
 }

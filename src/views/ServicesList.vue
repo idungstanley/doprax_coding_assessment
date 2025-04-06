@@ -32,7 +32,6 @@
       />
     </div>
 
-    <!-- Delete Confirmation Modal -->
     <div v-if="showDeleteModal" class="fixed z-10 inset-0 overflow-y-auto">
       <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <div class="fixed inset-0 transition-opacity" aria-hidden="true">
@@ -79,7 +78,6 @@
       </div>
     </div>
 
-    <!-- Details Modal -->
     <div
       v-if="showDetailsModal"
       class="fixed inset-0 z-20 overflow-y-auto w-screen h-screen"
@@ -90,7 +88,6 @@
         aria-hidden="true"
       ></div>
 
-      <!-- Modal Content -->
       <div
         :class="[
           'fixed bg-white shadow-xl transform transition-all duration-300',
@@ -103,7 +100,6 @@
         ]"
       >
         <div class="flex flex-col h-full">
-          <!-- Modal Header -->
           <div class="flex justify-between items-center p-4 border-b border-gray-200">
             <h2 class="text-lg font-medium text-gray-900">Cloud service details</h2>
             <div class="flex space-x-2">
@@ -138,23 +134,14 @@
             </div>
           </div>
 
-          <!-- Modal Body -->
           <div class="flex-1 overflow-y-auto bg-gray-100 m-4 text-left rounded-md">
-            <!-- Cover Image -->
             <div class="mb-4 border-b border-gray-200 p-4 ">
               <h3 class="text-sm font-medium text-gray-500 uppercase">Cover Image</h3>
               <div class="mt-2">
-                <!-- <img
-                  v-if="selectedService?.coverImage"
-                  :src="getImageSrc(selectedService.coverImage)"
-                  alt="Cover Image"
-                  class="w-32 h-32 rounded-md object-cover"
-                /> -->
                 <p class="text-sm text-gray-500">No cover image</p>
               </div>
             </div>
 
-            <!-- Service Details -->
             <div class="space-y-4">
               <div class="border-b border-gray-200 p-4">
                 <h3 class="text-sm font-medium text-gray-500 uppercase">Name</h3>
@@ -221,11 +208,10 @@ const confirmDelete = (id: string) => {
 };
 
 const deleteService = async () => {
-  // Remove from localStorage
   servicesStore.deleteService(serviceToDelete.value);
   services.value = services.value.filter((service) => service.id !== serviceToDelete.value);
   showDeleteModal.value = false;
-  showDetailsModal.value = false; // Close details modal if open
+  showDetailsModal.value = false;
 };
 
 const openDetailsModal = (service: CloudService) => {

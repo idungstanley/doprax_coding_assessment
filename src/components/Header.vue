@@ -14,7 +14,6 @@ interface Props {
   textColor?: string;
 }
 
-// Define props without assigning to a variable
 withDefaults(defineProps<Props>(), {
   bgColor: 'bg-white',
   textColor: 'text-gray-800'
@@ -25,5 +24,4 @@ withDefaults(defineProps<Props>(), {
 header {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
-/* Add any additional scoped styles if needed */
 </style>

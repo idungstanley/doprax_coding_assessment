@@ -3,12 +3,10 @@
     <h1 class="text-[17px] font-medium text-left mb-6">Edit Service Configuration</h1>
 
     <Form @submit="validateForm(onSubmit)" class="bg-white">
-      <!-- Service Basics -->
       <div class="mb-8">
         <h2 class="text-lg font-medium text-gray-900 mb-2">Service Basics</h2>
         <p class="text-sm text-gray-500 mb-4">Provide basic information about your cloud service.</p>
 
-        <!-- Service Name -->
         <div class="mb-4">
           <label for="serviceName" class="block text-sm font-medium text-gray-700">
             Service Name <span class="text-red-500">*</span>
@@ -24,7 +22,6 @@
           <ErrorMessage name="serviceName" class="text-red-500 text-sm mt-1" />
         </div>
 
-        <!-- Description -->
         <div class="mb-4">
           <label for="description" class="block text-sm font-medium text-gray-700"> Description </label>
           <Field
@@ -39,7 +36,6 @@
           <ErrorMessage name="description" class="text-red-500 text-sm mt-1" />
         </div>
 
-        <!-- Region -->
         <div class="mb-4">
           <label for="region" class="block text-sm font-medium text-gray-700">
             Region <span class="text-red-500">*</span>
@@ -61,12 +57,10 @@
         </div>
       </div>
 
-      <!-- Resource Configuration -->
       <div class="mb-8">
         <h2 class="text-lg font-medium text-gray-900 mb-2">Resource Configuration</h2>
         <p class="text-sm text-gray-500 mb-4">Configure the compute resources for your service.</p>
 
-        <!-- Instance Type -->
         <div class="mb-4">
           <label for="instanceType" class="block text-sm font-medium text-gray-700"> Instance Type </label>
           <div class="mt-2 space-y-2">
@@ -87,7 +81,6 @@
           <ErrorMessage name="instanceType" class="text-red-500 text-sm mt-1" />
         </div>
 
-        <!-- vCPU, Memory, Storage -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <label for="vCPU" class="block text-sm font-medium text-gray-700">
@@ -131,12 +124,10 @@
         </div>
       </div>
 
-      <!-- Network Settings -->
       <div class="mb-8">
         <h2 class="text-lg font-medium text-gray-900 mb-2">Network Settings</h2>
         <p class="text-sm text-gray-500 mb-4">Configure the network settings for your cloud service.</p>
 
-        <!-- VPC -->
         <div class="mb-4">
           <label for="vpc" class="block text-sm font-medium text-gray-700">
             Virtual Private Cloud (VPC) <span class="text-red-500">*</span>
@@ -155,7 +146,6 @@
           <ErrorMessage name="vpc" class="text-red-500 text-sm mt-1" />
         </div>
 
-        <!-- Subnet -->
         <div class="mb-4">
           <label for="subnet" class="block text-sm font-medium text-gray-700">
             Subnet <span class="text-red-500">*</span>
@@ -174,7 +164,6 @@
           <ErrorMessage name="subnet" class="text-red-500 text-sm mt-1" />
         </div>
 
-        <!-- Assign Public IP -->
         <div class="mb-4">
           <div class="flex items-center">
             <Field
@@ -190,7 +179,6 @@
           <ErrorMessage name="assignPublicIP" class="text-red-500 text-sm mt-1" />
         </div>
 
-        <!-- Security Groups -->
         <div class="mb-4">
           <label for="securityGroups" class="block text-sm font-medium text-gray-700"> Security Groups </label>
           <p class="text-sm text-gray-500 mb-2">Select the security groups to apply to your service</p>
@@ -213,7 +201,6 @@
         </div>
       </div>
 
-      <!-- Form Actions -->
       <div class="flex justify-end space-x-3">
         <button
           type="button"
@@ -244,11 +231,9 @@ import { useServicesStore } from '../store/services';
 
 const servicesStore = useServicesStore();
 
-// Router setup
 const route = useRoute();
 const router = useRouter();
 
-// Form setup
 const {
   handleSubmit: validateForm,
   values,
@@ -274,7 +259,6 @@ const {
   }
 });
 
-// Options for instance types
 const instanceTypes = [
   { value: 'Standard', label: 'Standard (General Purpose) - Balanced compute, memory, and networking' },
   { value: 'Compute Optimized', label: 'Compute Optimized - High performance processors' },
@@ -282,10 +266,8 @@ const instanceTypes = [
   { value: 'Storage Optimized', label: 'Storage Optimized - Low latency, high disk throughput' }
 ];
 
-// Options for security groups
 const securityGroupsOptions = ['Web Traffic (80, 443)', 'SSH Access (22)', 'Database (3306, 5432)', 'Internal Only'];
 
-// Watch for changes in values to debug state updates
 watch(
   () => values,
   (newValues) => {
@@ -295,7 +277,6 @@ watch(
   { deep: true }
 );
 
-// Load service data from localStorage
 onMounted(async () => {
   await servicesStore.loadServices();
   const serviceId = route.params.id as string;
@@ -305,13 +286,13 @@ onMounted(async () => {
     try {
       const formData: CloudServiceForm = {
         ...storedService,
-        coverImage: null // Not used in this form
+        coverImage: null
       };
       setValues(formData);
       console.log('Loaded service from setvalues:', values);
     } catch (error) {
       console.error('Failed to parse service data from store:', error);
-      router.push({ name: 'services-list' }); // Redirect if data cannot be loaded
+      router.push({ name: 'services-list' });
     }
   } else {
     console.warn(`No service found in store for ID: ${serviceId}`);
@@ -319,7 +300,6 @@ onMounted(async () => {
   }
 });
 
-// Handle field updates from the child
 const updateField = (field: keyof CloudServiceForm, value: any) => {
   setFieldValue(field, value);
   console.log(`Updated ${field} to:`, value);
@@ -331,12 +311,10 @@ const handleSecurityGroupChange = (groupValue: string, event: Event) => {
   const currentGroups = [...values.securityGroups];
 
   if (isChecked) {
-    // Add the group if checked and not already in the array
     if (!currentGroups.includes(groupValue)) {
       updateField('securityGroups', [...currentGroups, groupValue]);
     }
   } else {
-    // Remove the group if unchecked
     updateField(
       'securityGroups',
       currentGroups.filter((group) => group !== groupValue)
@@ -346,7 +324,6 @@ const handleSecurityGroupChange = (groupValue: string, event: Event) => {
 
 console.log('Form submission:', values);
 
-// Form submission handler
 const onSubmit = async (values: CloudServiceForm) => {
   console.log('Form submission successful:', values);
   const result = await validate();
@@ -359,22 +336,19 @@ const onSubmit = async (values: CloudServiceForm) => {
     const serviceId = route.params.id as string;
     const dataToSave = {
       ...values,
-      coverImage: null // Exclude coverImage since it's not used in this form
+      coverImage: null
     };
 
-    // Update in localStorage
     servicesStore.updateService({ id: serviceId, updates: dataToSave });
 
     console.log(`Updated service in localStorage with ID: ${serviceId}`);
 
-    // Navigate to the success page
     router.push({ name: 'deployment-success' });
   } catch (error) {
     console.error('Failed to save service:', error);
   }
 };
 
-// Cancel button handler
 const cancel = () => {
   router.push({ name: 'services-list' });
 };
